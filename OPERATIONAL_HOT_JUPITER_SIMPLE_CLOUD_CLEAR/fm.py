@@ -273,64 +273,72 @@ def tophatfold(lam, flux, fwhm):
 def xsects():
     ### Read in CK arrays
     # H2H2
+    if sys.version_info.major >= 3:
+        def load_pickle(file):
+            # Python 3 tries to encode with ascii by default
+            return load(file, encoding='bytes')
+    else:
+        def load_pickle(file):
+            return load(file)
+
     file='../ABSCOEFF/CKarrH2H2_R100_900_16500.pic'
-    P,T,wno,kcoeff,g,wts = load(open(file,'rb'))
+    P,T,wno,kcoeff,g,wts = load_pickle(open(file,'rb'))
     xsecarrH2H2=10**(kcoeff-4.)
     # H2He
     file='../ABSCOEFF/CKarrH2He_R100_900_16500.pic'
-    P,T,wno,kcoeff,g,wts = load(open(file,'rb'))
+    P,T,wno,kcoeff,g,wts = load_pickle(open(file,'rb'))
     xsecarrH2He=10**(kcoeff-4.)
     # H2O
     file='../ABSCOEFF/CKarrH2O_R100_900_16500.pic'
-    P,T,wno,kcoeff,g,wts = load(open(file,'rb'))
+    P,T,wno,kcoeff,g,wts = load_pickle(open(file,'rb'))
     xsecarrH2O=10**(kcoeff-4.)
     # CH4
     file='../ABSCOEFF/CKarrCH4_R100_900_16500.pic'
-    P,T,wno,kcoeff,g,wts = load(open(file,'rb'))
+    P,T,wno,kcoeff,g,wts = load_pickle(open(file,'rb'))
     xsecarrCH4=10**(kcoeff-4.)
     # CO
     file='../ABSCOEFF/CKarrCO_R100_900_16500.pic'
-    P,T,wno,kcoeff,g,wts = load(open(file,'rb'))
+    P,T,wno,kcoeff,g,wts = load_pickle(open(file,'rb'))
     xsecarrCO=10**(kcoeff-4.)
     # CO2
     file='../ABSCOEFF/CKarrCO2_R100_900_16500.pic'
-    P,T,wno,kcoeff,g,wts = load(open(file,'rb'))
+    P,T,wno,kcoeff,g,wts = load_pickle(open(file,'rb'))
     xsecarrCO2=10**(kcoeff-4.)
     # NH3
     file='../ABSCOEFF/CKarrNH3_R100_900_16500.pic'
-    P,T,wno,kcoeff,g,wts = load(open(file,'rb'))
+    P,T,wno,kcoeff,g,wts = load_pickle(open(file,'rb'))
     xsecarrNH3=10.**(kcoeff-4.)
     # Na
     file='../ABSCOEFF/CKarrNa_R100_900_16500.pic'
-    P,T,wno,kcoeff,g,wts = load(open(file,'rb'))
+    P,T,wno,kcoeff,g,wts = load_pickle(open(file,'rb'))
     xsecarrNa=10.**(kcoeff-4.)
     # K
     file='../ABSCOEFF/CKarrK_R100_900_16500.pic'
-    P,T,wno,kcoeff,g,wts = load(open(file,'rb'))
+    P,T,wno,kcoeff,g,wts = load_pickle(open(file,'rb'))
     xsecarrK=10.**(kcoeff-4.)
     # TiO
     file='../ABSCOEFF/CKarrTiO_R100_900_16500.pic'
-    P,T,wno,kcoeff,g,wts = load(open(file,'rb'))
+    P,T,wno,kcoeff,g,wts = load_pickle(open(file,'rb'))
     xsecarrTiO=10.**(kcoeff-4.)
     # VO
     file='../ABSCOEFF/CKarrVO_R100_900_16500.pic'
-    P,T,wno,kcoeff,g,wts = load(open(file,'rb'))
+    P,T,wno,kcoeff,g,wts = load_pickle(open(file,'rb'))
     xsecarrVO=10.**(kcoeff-4.)
     # C2H2
     file='../ABSCOEFF/CKarrC2H2_R100_900_16500.pic'
-    P,T,wno,kcoeff,g,wts = load(open(file,'rb'))
+    P,T,wno,kcoeff,g,wts = load_pickle(open(file,'rb'))
     xsecarrC2H2=10.**(kcoeff-4.)
     # HCN
     file='../ABSCOEFF/CKarrHCN_R100_900_16500.pic'
-    P,T,wno,kcoeff,g,wts = load(open(file,'rb'))
+    P,T,wno,kcoeff,g,wts = load_pickle(open(file,'rb'))
     xsecarrHCN=10.**(kcoeff-4.)
     # H2S
     file='../ABSCOEFF/CKarrH2S_R100_900_16500.pic'
-    P,T,wno,kcoeff,g,wts = load(open(file,'rb'))
+    P,T,wno,kcoeff,g,wts = load_pickle(open(file,'rb'))
     xsecarrH2S=10.**(kcoeff-4.)
     # FeH
     file='../ABSCOEFF/CKarrFeH_R100_900_16500.pic'
-    P,T,wno,kcoeff,g,wts = load(open(file,'rb'))
+    P,T,wno,kcoeff,g,wts = load_pickle(open(file,'rb'))
     xsecarrFeH=10.**(kcoeff-4.)
     #pdb.set_trace()
     #semilogy(1E4/wno, xsecarrCH4[10,10,:,10])
@@ -375,9 +383,9 @@ def instrument_non_uniform_tophat(wlgrid,wno, Fp):
     delta[szmod-1]=delta[szmod-2] 
     #pdb.set_trace()
     for i in range(szmod-1):
-	i=i+1
-	loc=np.where((1E4/wno >= wlgrid[i]-0.5*delta[i-1]) & (1E4/wno < wlgrid[i]+0.5*delta[i]))
-	Fint[i]=np.mean(Fp[loc])
+        i=i+1
+        loc=np.where((1E4/wno >= wlgrid[i]-0.5*delta[i-1]) & (1E4/wno < wlgrid[i]+0.5*delta[i]))
+        Fint[i]=np.mean(Fp[loc])
 
     loc=np.where((1E4/wno > wlgrid[0]-0.5*delta[0]) & (1E4/wno < wlgrid[0]+0.5*delta[0]))
     Fint[0]=np.mean(Fp[loc])

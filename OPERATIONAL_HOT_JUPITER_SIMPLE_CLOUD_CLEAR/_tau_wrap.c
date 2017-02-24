@@ -19,14 +19,35 @@ static PyMethodDef module_methods[] = {
   {NULL}
 };
 
+#if PY_MAJOR_VERSION >= 3
+// C API changes for Python 3
+static struct PyModuleDef moduledef = {
+    PyModuleDef_HEAD_INIT,
+    "_tran_module",     /* m_name */
+    module_docstring,  /* m_doc */
+    -1,                  /* m_size */
+    module_methods,    /* m_methods */
+    NULL,                /* m_reload */
+    NULL,                /* m_traverse */
+    NULL,                /* m_clear */
+    NULL,                /* m_free */
+};
+PyMODINIT_FUNC PyInit__tran_module(void) {
+  PyObject* m = PyModule_Create(&moduledef);
+  if (m == NULL) 
+    return NULL;
+  import_array();
+  return m;
+}
+#else
 PyMODINIT_FUNC init_tran_module(void) {
   PyObject* m = Py_InitModule3("_tran_module", module_methods,
-			       module_docstring);
+             module_docstring);
   if (m == NULL) return;
 
   import_array();
 }
-
+#endif
 /*
 Function: _tau_wrap
 -------------
@@ -37,32 +58,32 @@ static PyObject* _tau_wrap(PyObject* self, PyObject* args) {
   PyObject *Xsect_obj, *RXsect_obj, *Z_obj, *P_obj, *T_obj, *F_obj, *Tau_obj;
 
   if (!PyArg_ParseTuple(args, "OOOOOOOd", &Xsect_obj,
-			&RXsect_obj, &Z_obj, &P_obj,
-			&T_obj, &F_obj, &Tau_obj, &r0)) {
+      &RXsect_obj, &Z_obj, &P_obj,
+      &T_obj, &F_obj, &Tau_obj, &r0)) {
       return NULL;
   }
 
   PyObject* Xsect_arr = PyArray_FROM_OTF(Xsect_obj, NPY_DOUBLE,
-				     NPY_IN_ARRAY);
+             NPY_IN_ARRAY);
   PyObject* RXsect_arr = PyArray_FROM_OTF(RXsect_obj,
-					  NPY_DOUBLE,
-				     NPY_IN_ARRAY);
+            NPY_DOUBLE,
+             NPY_IN_ARRAY);
   PyObject* Z_arr = PyArray_FROM_OTF(Z_obj, NPY_DOUBLE,
-				     NPY_IN_ARRAY);
+             NPY_IN_ARRAY);
   PyObject* P_arr = PyArray_FROM_OTF(P_obj, NPY_DOUBLE,
-				     NPY_IN_ARRAY);
+             NPY_IN_ARRAY);
   PyObject* T_arr = PyArray_FROM_OTF(T_obj, NPY_DOUBLE,
-				     NPY_IN_ARRAY);
+             NPY_IN_ARRAY);
   PyObject* F_arr = PyArray_FROM_OTF(F_obj, NPY_DOUBLE,
-				     NPY_IN_ARRAY);
+             NPY_IN_ARRAY);
   PyObject* Tau_arr = PyArray_FROM_OTF(Tau_obj, NPY_DOUBLE,
-				     NPY_IN_ARRAY);
+             NPY_IN_ARRAY);
 
   //If any of the arrays are unable to be created,
   //PyArray_FROM_OTF will set the error status and 
   //we return NULL indicating there was an error.
   if (!(Xsect_arr && RXsect_arr && Z_arr
-	&& P_arr && T_arr && F_arr && Tau_arr)) {
+  && P_arr && T_arr && F_arr && Tau_arr)) {
     Py_XDECREF(Xsect_arr);
     Py_XDECREF(RXsect_arr);
     Py_XDECREF(Z_arr);
@@ -113,35 +134,35 @@ static PyObject* _init_xsects_wrap(PyObject* self, PyObject* args) {
     *Pgrid_obj, *Tavg_obj, *Pavg_obj, *wno_obj;
 
   if (!PyArg_ParseTuple(args, "OOOOOOOOidd", &Xsectout_obj,
-			&RXsectout_obj, &Xsectin_obj, &Tgrid_obj,
-			&Pgrid_obj, &Tavg_obj, &Pavg_obj,
-			&wno_obj, &bin_offset, &scatter_coeff, &scatter_power)) {
+      &RXsectout_obj, &Xsectin_obj, &Tgrid_obj,
+      &Pgrid_obj, &Tavg_obj, &Pavg_obj,
+      &wno_obj, &bin_offset, &scatter_coeff, &scatter_power)) {
       return NULL;
   }
 
   PyObject* Xsectout_arr = PyArray_FROM_OTF(Xsectout_obj, NPY_DOUBLE,
-				     NPY_IN_ARRAY);
+             NPY_IN_ARRAY);
   PyObject* RXsectout_arr = PyArray_FROM_OTF(RXsectout_obj, NPY_DOUBLE,
-				     NPY_IN_ARRAY);
+             NPY_IN_ARRAY);
   PyObject* Xsectin_arr = PyArray_FROM_OTF(Xsectin_obj, NPY_DOUBLE,
-				     NPY_IN_ARRAY);
+             NPY_IN_ARRAY);
   PyObject* Tgrid_arr = PyArray_FROM_OTF(Tgrid_obj, NPY_DOUBLE,
-				     NPY_IN_ARRAY);
+             NPY_IN_ARRAY);
   PyObject* Pgrid_arr = PyArray_FROM_OTF(Pgrid_obj, NPY_DOUBLE,
-				     NPY_IN_ARRAY);
+             NPY_IN_ARRAY);
   PyObject* Tavg_arr = PyArray_FROM_OTF(Tavg_obj, NPY_DOUBLE,
-				     NPY_IN_ARRAY);
+             NPY_IN_ARRAY);
   PyObject* Pavg_arr = PyArray_FROM_OTF(Pavg_obj, NPY_DOUBLE,
-				     NPY_IN_ARRAY);
+             NPY_IN_ARRAY);
   PyObject* wno_arr = PyArray_FROM_OTF(wno_obj, NPY_DOUBLE,
-				     NPY_IN_ARRAY);
+             NPY_IN_ARRAY);
 
   //If any of the arrays are unable to be created,
   //PyArray_FROM_OTF will set the error status and 
   //we return NULL indicating there was an error.
   if (!(Xsectout_arr && RXsectout_arr && Xsectin_arr
-	&& Tgrid_arr && Pgrid_arr && Tavg_arr && Pavg_arr
-	&& wno_arr)) {
+  && Tgrid_arr && Pgrid_arr && Tavg_arr && Pavg_arr
+  && wno_arr)) {
     Py_XDECREF(Xsectout_arr);
     Py_XDECREF(RXsectout_arr);
     Py_XDECREF(Xsectin_arr);
@@ -170,8 +191,8 @@ static PyObject* _init_xsects_wrap(PyObject* self, PyObject* args) {
   double *wno = (double *)PyArray_DATA(wno_arr);
 
   _init_xsects(Xsectsout, RXsectsout, Xsectsin, Tgrid, Pgrid, Tavg,
-	       Pavg, wno, scatter_coeff, scatter_power, numlevels,
-	       numbins, bin_offset, numprebins, numgases, Tgridlen, Pgridlen);
+         Pavg, wno, scatter_coeff, scatter_power, numlevels,
+         numbins, bin_offset, numprebins, numgases, Tgridlen, Pgridlen);
 
   Py_DECREF(Xsectout_arr);
   Py_DECREF(RXsectout_arr);
