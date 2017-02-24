@@ -64,12 +64,12 @@ outfile='MCMC.pic'
 if sys.version_info.major >= 3:
     def load_pickle(file):
         # Python 3 tries to encode with ascii by default
-        return load(file, encoding='bytes')
+        return pickle.load(file, encoding='bytes')
 else:
     def load_pickle(file):
-        return load(file)
+        return pickle.load(file)
 
-data=pickle.load_pickle(open("Data.pic",'rb'))
+data=load_pickle(open("Data.pic",'rb'))
 
 wlgrid=data[0]
 y_meas=data[1]
